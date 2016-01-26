@@ -120,7 +120,7 @@
 #include <openssl/err.h>
 
 #ifndef OPENSSL_NO_ERR
-#if __APPLE__
+#if __APPLE__ && !defined(DARLING) // const data is actually immutable in ELF, causes crashes
 #define CONST_DATA const // we want to mark these items const on OSX                                        
 #else
 #define CONST_DATA       // but not on Windows                                                              

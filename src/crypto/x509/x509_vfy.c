@@ -73,7 +73,7 @@
 /*
  * If we are using Trust Evaluation Agent, rename the original function
  */
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(DARLING)
 #define X509_verify_cert X509_verify_cert_orig
 #endif
 

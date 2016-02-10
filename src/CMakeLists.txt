@@ -8,7 +8,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2 -msse3 -w -nostdinc")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__DARWIN_UNIX03 -fPIC -w")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__DARWIN_UNIX03 -fPIC -w -ggdb -O0")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -nostdlib -Wl,--version-script=${DARLING_TOP_DIRECTORY}/darwin.map")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -624,7 +624,7 @@ else(BITS EQUAL 64)
 	)
 endif(BITS EQUAL 64)
 
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${SUFFIX}/darling")
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/darling")
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
@@ -634,4 +634,4 @@ target_link_libraries(crypto098 system)
 add_library(ssl098 SHARED ${ssl_sources})
 target_link_libraries(ssl098 system crypto098)
 
-install(TARGETS ssl098 crypto098 DESTINATION lib${SUFFIX}/darling)
+install(TARGETS ssl098 crypto098 DESTINATION ${CMAKE_INSTALL_LIBDIR}/darling)

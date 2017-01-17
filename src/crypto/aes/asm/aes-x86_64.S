@@ -1,6 +1,5 @@
 .text
-.type	_x86_64_AES_encrypt,@function
-.align	16
+.align	4
 _x86_64_AES_encrypt:
 	xorl	0(%r15),%eax
 	xorl	4(%r15),%ebx
@@ -10,7 +9,7 @@ _x86_64_AES_encrypt:
 	movl	240(%r15),%r13d
 	subl	$1,%r13d
 	jmp	.Lenc_loop
-.align	16
+.align	4
 .Lenc_loop:
 
 	movzbl	%al,%esi
@@ -156,11 +155,10 @@ _x86_64_AES_encrypt:
 	xorl	%r12d,%ecx
 	xorl	%r8d,%edx
 .byte	0xf3,0xc3			
-.size	_x86_64_AES_encrypt,.-_x86_64_AES_encrypt
-.globl	AES_encrypt
-.type	AES_encrypt,@function
-.align	16
-AES_encrypt:
+
+.globl	_AES_encrypt
+.align	4
+_AES_encrypt:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -173,7 +171,7 @@ AES_encrypt:
 	movq	%rsi,%r9
 
 	.long	0x1358d4c,0x90000000
-	leaq	AES_Te-.(%r14),%r14
+	leaq	_AES_Te-.(%r14),%r14
 
 	movl	0(%r8),%eax
 	movl	4(%r8),%ebx
@@ -194,9 +192,8 @@ AES_encrypt:
 	popq	%rbp
 	popq	%rbx
 	.byte	0xf3,0xc3
-.size	AES_encrypt,.-AES_encrypt
-.type	_x86_64_AES_decrypt,@function
-.align	16
+
+.align	4
 _x86_64_AES_decrypt:
 	xorl	0(%r15),%eax
 	xorl	4(%r15),%ebx
@@ -206,7 +203,7 @@ _x86_64_AES_decrypt:
 	movl	240(%r15),%r13d
 	subl	$1,%r13d
 	jmp	.Ldec_loop
-.align	16
+.align	4
 .Ldec_loop:
 
 	movzbl	%al,%esi
@@ -347,11 +344,10 @@ _x86_64_AES_decrypt:
 	xorl	%r12d,%ecx
 	xorl	%r8d,%edx
 .byte	0xf3,0xc3			
-.size	_x86_64_AES_decrypt,.-_x86_64_AES_decrypt
-.globl	AES_decrypt
-.type	AES_decrypt,@function
-.align	16
-AES_decrypt:
+
+.globl	_AES_decrypt
+.align	4
+_AES_decrypt:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -364,7 +360,7 @@ AES_decrypt:
 	movq	%rsi,%r9
 
 	.long	0x1358d4c,0x90000000
-	leaq	AES_Td-.(%r14),%r14
+	leaq	_AES_Td-.(%r14),%r14
 
 
 	leaq	2048+128(%r14),%r14;
@@ -397,11 +393,10 @@ AES_decrypt:
 	popq	%rbp
 	popq	%rbx
 	.byte	0xf3,0xc3
-.size	AES_decrypt,.-AES_decrypt
-.globl	AES_set_encrypt_key
-.type	AES_set_encrypt_key,@function
-.align	16
-AES_set_encrypt_key:
+
+.globl	_AES_set_encrypt_key
+.align	4
+_AES_set_encrypt_key:
 	pushq	%rbx
 	pushq	%rbp
 	subq	$8,%rsp
@@ -412,10 +407,9 @@ AES_set_encrypt_key:
 	movq	16(%rsp),%rbx
 	addq	$24,%rsp
 	.byte	0xf3,0xc3
-.size	AES_set_encrypt_key,.-AES_set_encrypt_key
 
-.type	_x86_64_AES_set_encrypt_key,@function
-.align	16
+
+.align	4
 _x86_64_AES_set_encrypt_key:
 	movl	%esi,%ecx
 	movq	%rdi,%rsi
@@ -427,7 +421,7 @@ _x86_64_AES_set_encrypt_key:
 	jz	.Lbadpointer
 
 	.long	0x12d8d48,0x90000000
-	leaq	AES_Te-.(%rbp),%rbp
+	leaq	_AES_Te-.(%rbp),%rbp
 
 	cmpl	$128,%ecx
 	je	.L10rounds
@@ -450,7 +444,7 @@ _x86_64_AES_set_encrypt_key:
 
 	xorl	%ecx,%ecx
 	jmp	.L10shortcut
-.align	4
+.align	2
 .L10loop:
 	movl	0(%rdi),%eax
 	movl	12(%rdi),%edx
@@ -509,7 +503,7 @@ _x86_64_AES_set_encrypt_key:
 
 	xorl	%ecx,%ecx
 	jmp	.L12shortcut
-.align	4
+.align	2
 .L12loop:
 	movl	0(%rdi),%eax
 	movl	20(%rdi),%edx
@@ -580,7 +574,7 @@ _x86_64_AES_set_encrypt_key:
 
 	xorl	%ecx,%ecx
 	jmp	.L14shortcut
-.align	4
+.align	2
 .L14loop:
 	movl	28(%rdi),%edx
 .L14shortcut:
@@ -661,11 +655,11 @@ _x86_64_AES_set_encrypt_key:
 	movq	$-1,%rax
 .Lexit:
 .byte	0xf3,0xc3		
-.size	_x86_64_AES_set_encrypt_key,.-_x86_64_AES_set_encrypt_key
-.globl	AES_set_decrypt_key
-.type	AES_set_decrypt_key,@function
-.align	16
-AES_set_decrypt_key:
+
+.globl	_AES_set_decrypt_key
+
+.align	4
+_AES_set_decrypt_key:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%rdx
@@ -680,7 +674,7 @@ AES_set_decrypt_key:
 	leaq	(%rdi,%rcx,4),%rcx
 	movq	%r8,%rsi
 	leaq	(%r8,%rcx,4),%rdi
-.align	4
+.align	2
 .Linvert:
 	movq	0(%rsi),%rax
 	movq	8(%rsi),%rbx
@@ -696,13 +690,13 @@ AES_set_decrypt_key:
 	jne	.Linvert
 
 	.long	0x10d8d4c,0x90000000
-	leaq	AES_Td-.(%r9),%rdi
-	leaq	AES_Te-AES_Td(%rdi),%r9
+	leaq	_AES_Td-.(%r9),%rdi
+	leaq	_AES_Te-_AES_Td(%rdi),%r9
 
 	movq	%r8,%rsi
 	movl	240(%r8),%ecx
 	subl	$1,%ecx
-.align	4
+.align	2
 .Lpermute:
 	leaq	16(%rsi),%rsi
 	movl	0(%rsi),%eax
@@ -778,11 +772,11 @@ AES_set_decrypt_key:
 	movq	16(%rsp),%rbx
 	addq	$24,%rsp
 	.byte	0xf3,0xc3
-.size	AES_set_decrypt_key,.-AES_set_decrypt_key
-.globl	AES_cbc_encrypt
-.type	AES_cbc_encrypt,@function
-.align	16
-AES_cbc_encrypt:
+
+.globl	_AES_cbc_encrypt
+
+.align	4
+_AES_cbc_encrypt:
 	cmpq	$0,%rdx
 	je	.Lcbc_just_ret
 	pushq	%rbx
@@ -801,7 +795,7 @@ AES_cbc_encrypt:
 	cmpq	$0,%r9
 	je	.LDECRYPT
 
-	leaq	AES_Te-.Lcbc_pic_point(%r14),%r14
+	leaq	_AES_Te-.Lcbc_pic_point(%r14),%r14
 
 
 	leaq	-64-248(%rsp),%r15
@@ -825,7 +819,7 @@ AES_cbc_encrypt:
 	andq	$4095,%r12
 	addq	$320,%r12
 	subq	%r12,%r15
-.align	4
+.align	2
 .Lcbc_te_ok:
 
 	xchgq	%rsp,%r15
@@ -848,7 +842,7 @@ AES_cbc_encrypt:
 	jb	.Lcbc_do_ecopy
 	cmpq	$4096-248,%r10
 	jb	.Lcbc_skip_ecopy
-.align	4
+.align	2
 .Lcbc_do_ecopy:
 	movq	%r15,%rsi
 	leaq	56(%rsp),%rdi
@@ -861,7 +855,7 @@ AES_cbc_encrypt:
 	movq	%r15,32(%rsp)
 
 	movl	$16,%ecx
-.align	4
+.align	2
 .Lcbc_prefetch_te:
 	movq	0(%r14),%r10
 	movq	32(%r14),%r11
@@ -880,7 +874,7 @@ AES_cbc_encrypt:
 	movl	12(%rbp),%edx
 	jz	.Lcbc_enc_tail		
 
-.align	4
+.align	2
 .Lcbc_enc_loop:
 	xorl	0(%r8),%eax
 	xorl	4(%r8),%ebx
@@ -912,7 +906,7 @@ AES_cbc_encrypt:
 	movl	%ecx,8(%rbp)
 	movl	%edx,12(%rbp)
 
-.align	4
+.align	2
 .Lcbc_cleanup:
 	cmpl	$0,56+240(%rsp)
 	leaq	56(%rsp),%rdi
@@ -931,7 +925,7 @@ AES_cbc_encrypt:
 	popq	%rbx
 .Lcbc_just_ret:
 	.byte	0xf3,0xc3
-.align	4
+.align	2
 .Lcbc_enc_tail:
 	movq	%rax,%r11
 	movq	%rcx,%r12
@@ -949,9 +943,9 @@ AES_cbc_encrypt:
 	movq	%r12,%rcx
 	jmp	.Lcbc_enc_loop		
 
-.align	16
+.align	4
 .LDECRYPT:
-	leaq	AES_Td-.Lcbc_pic_point(%r14),%r14
+	leaq	_AES_Td-.Lcbc_pic_point(%r14),%r14
 
 
 	leaq	-64-248(%rsp),%r15
@@ -975,7 +969,7 @@ AES_cbc_encrypt:
 	andq	$4095,%r12
 	addq	$320,%r12
 	subq	%r12,%r15
-.align	4
+.align	2
 .Lcbc_td_ok:
 
 	xchgq	%rsp,%r15
@@ -998,7 +992,7 @@ AES_cbc_encrypt:
 	jb	.Lcbc_do_dcopy
 	cmpq	$4096-248,%r10
 	jb	.Lcbc_skip_dcopy
-.align	4
+.align	2
 .Lcbc_do_dcopy:
 	movq	%r15,%rsi
 	leaq	56(%rsp),%rdi
@@ -1011,7 +1005,7 @@ AES_cbc_encrypt:
 	movq	%r15,32(%rsp)
 
 	movl	$18,%ecx
-.align	4
+.align	2
 .Lcbc_prefetch_td:
 	movq	0(%r14),%r10
 	movq	32(%r14),%r11
@@ -1026,7 +1020,7 @@ AES_cbc_encrypt:
 	je	.Lcbc_dec_in_place
 
 	movq	%rbp,40(%rsp)
-.align	4
+.align	2
 .Lcbc_dec_loop:
 	movl	0(%r8),%eax
 	movl	4(%r8),%ebx
@@ -1067,7 +1061,7 @@ AES_cbc_encrypt:
 	movq	%r11,8(%r12)
 	jmp	.Lcbc_cleanup
 
-.align	4
+.align	2
 .Lcbc_dec_partial:
 	movl	%eax,0+40(%rsp)
 	movl	%ebx,4+40(%rsp)
@@ -1080,7 +1074,7 @@ AES_cbc_encrypt:
 .long	0xF689A4F3		
 	jmp	.Lcbc_dec_end
 
-.align	16
+.align	4
 .Lcbc_dec_in_place:
 	movl	0(%r8),%eax
 	movl	4(%r8),%ebx
@@ -1117,7 +1111,7 @@ AES_cbc_encrypt:
 	jnz	.Lcbc_dec_in_place
 	jmp	.Lcbc_cleanup
 
-.align	4
+.align	2
 .Lcbc_dec_in_place_partial:
 
 	leaq	(%r9,%rcx,1),%rdi
@@ -1125,10 +1119,10 @@ AES_cbc_encrypt:
 	negq	%rcx
 .long	0xF689A4F3	
 	jmp	.Lcbc_cleanup
-.size	AES_cbc_encrypt,.-AES_cbc_encrypt
-.globl	AES_Te
-.align	64
-AES_Te:
+
+.globl	_AES_Te
+.align	5
+_AES_Te:
 .long	0xa56363c6,0xa56363c6
 .long	0x847c7cf8,0x847c7cf8
 .long	0x997777ee,0x997777ee
@@ -1388,9 +1382,9 @@ AES_Te:
 .long	0x00000001, 0x00000002, 0x00000004, 0x00000008
 .long	0x00000010, 0x00000020, 0x00000040, 0x00000080
 .long	0x0000001b, 0x00000036, 0, 0, 0, 0, 0, 0
-.globl	AES_Td
-.align	64
-AES_Td:
+.globl	_AES_Td
+.align	5
+_AES_Td:
 .long	0x50a7f451,0x50a7f451
 .long	0x5365417e,0x5365417e
 .long	0xc3a4171a,0xc3a4171a

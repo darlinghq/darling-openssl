@@ -624,21 +624,24 @@ set(crypto_sources
 	crypto/pqueue/pqueue.c
 )
 
-if (BITS EQUAL 64)
-	set(crypto_sources ${crypto_sources}
-		crypto/aes/asm/aes-x86_64.S
-		#crypto/rc4/asm/rc4-x86_64.S
-	)
-else(BITS EQUAL 64)
-	set(crypto_sources ${crypto_sources}
-		crypto/aes/asm/aes-586.S
-		crypto/ripemd/asm/rmd-586.S
-		#crypto/rc4/asm/rc4-586.S
-	)
-endif(BITS EQUAL 64)
+set(crypto64_sources
+	crypto/aes/asm/aes-x86_64.S
+	#crypto/rc4/asm/rc4-x86_64.S
+)
+set(crypto32_sources
+	crypto/aes/asm/aes-586.S
+	crypto/ripemd/asm/rmd-586.S
+	#crypto/rc4/asm/rc4-586.S
+)
+
+add_library(crypto32 OBJECT ${crypto32_sources})
+set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
+add_library(crypto64 OBJECT ${crypto64_sources})
+set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
 
 set(DYLIB_INSTALL_NAME "/usr/lib/libcrypto.0.9.8.dylib")
-add_darling_library(crypto098 SHARED ${crypto_sources})
+add_darling_library(crypto098 SHARED ${crypto_sources} $<TARGET_OBJECTS:crypto32> $<TARGET_OBJECTS:crypto64>)
+make_fat(crypto098)
 target_link_libraries(crypto098 system)
 set_target_properties(crypto098 PROPERTIES OUTPUT_NAME "crypto.0.9.8")
 
@@ -647,6 +650,7 @@ InstallSymlink("libcrypto.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/
 
 set(DYLIB_INSTALL_NAME "/usr/lib/libssl.0.9.8.dylib")
 add_darling_library(ssl098 SHARED ${ssl_sources})
+make_fat(ssl098)
 target_link_libraries(ssl098 system crypto098)
 set_target_properties(ssl098 PROPERTIES OUTPUT_NAME "ssl.0.9.8")
 

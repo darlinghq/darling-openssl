@@ -6,10 +6,9 @@
 
 	.file	"crypto/ripemd/asm/rmd-586.s"
 .text
-.globl	ripemd160_block_asm_data_order
-.type	ripemd160_block_asm_data_order,@function
-.align	16
-ripemd160_block_asm_data_order:
+.globl	_ripemd160_block_asm_data_order
+.align	4
+_ripemd160_block_asm_data_order:
 	movl	4(%esp),	%edx
 	movl	8(%esp),	%eax
 	pushl	%esi
@@ -1968,5 +1967,4 @@ ripemd160_block_asm_data_order:
 	popl	%esi
 	ret
 .L_ripemd160_block_asm_data_order_end:
-.size	ripemd160_block_asm_data_order,.L_ripemd160_block_asm_data_order_end-ripemd160_block_asm_data_order
 .ident	"ripemd160_block_asm_data_order"

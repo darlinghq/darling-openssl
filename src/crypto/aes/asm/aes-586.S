@@ -8,8 +8,7 @@
 .globl	AES_Te
 .text
 .globl	_x86_AES_encrypt
-.type	_x86_AES_encrypt,@function
-.align	16
+.align	4
 _x86_AES_encrypt:
 	movl	%edi,		12(%esp)
 	xorl	(%edi),		%eax
@@ -169,7 +168,7 @@ _x86_AES_encrypt:
 	xorl	8(%edi),	%ecx
 	xorl	12(%edi),	%edx
 	ret
-.align	64
+.align	6
 AES_Te:
 	.long	2774754246,2774754246
 	.long	2222750968,2222750968
@@ -431,14 +430,12 @@ AES_Te:
 	.long	16,32,64,128
 	.long	27,54,0,0,0,0,0,0
 .L__x86_AES_encrypt_end:
-.size	_x86_AES_encrypt,.L__x86_AES_encrypt_end-_x86_AES_encrypt
 .ident	"_x86_AES_encrypt"
 .globl	AES_Te
 .text
-.globl	AES_encrypt
-.type	AES_encrypt,@function
+.globl	_AES_encrypt
 .align	16
-AES_encrypt:
+_AES_encrypt:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
@@ -472,13 +469,11 @@ AES_encrypt:
 	popl	%ebp
 	ret
 .L_AES_encrypt_end:
-.size	AES_encrypt,.L_AES_encrypt_end-AES_encrypt
 .ident	"AES_encrypt"
 .globl	AES_Td
 .text
 .globl	_x86_AES_decrypt
-.type	_x86_AES_decrypt,@function
-.align	16
+.align	4
 _x86_AES_decrypt:
 	movl	%edi,		12(%esp)
 	xorl	(%edi),		%eax
@@ -635,7 +630,7 @@ _x86_AES_decrypt:
 	xorl	8(%edi),	%ecx
 	xorl	12(%edi),	%edx
 	ret
-.align	64
+.align	6
 AES_Td:
 	.long	1353184337,1353184337
 	.long	1399144830,1399144830
@@ -926,14 +921,12 @@ AES_Td:
 	.byte	23,43,4,126,186,119,214,38
 	.byte	225,105,20,99,85,33,12,125
 .L__x86_AES_decrypt_end:
-.size	_x86_AES_decrypt,.L__x86_AES_decrypt_end-_x86_AES_decrypt
 .ident	"_x86_AES_decrypt"
 .globl	AES_Td
 .text
-.globl	AES_decrypt
-.type	AES_decrypt,@function
+.globl	_AES_decrypt
 .align	16
-AES_decrypt:
+_AES_decrypt:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
@@ -977,15 +970,13 @@ AES_decrypt:
 	popl	%ebp
 	ret
 .L_AES_decrypt_end:
-.size	AES_decrypt,.L_AES_decrypt_end-AES_decrypt
 .ident	"AES_decrypt"
 .globl	AES_Te
 .globl	AES_Td
 .text
-.globl	AES_cbc_encrypt
-.type	AES_cbc_encrypt,@function
-.align	16
-AES_cbc_encrypt:
+.globl	_AES_cbc_encrypt
+.align	4
+_AES_cbc_encrypt:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
@@ -1335,14 +1326,12 @@ AES_cbc_encrypt:
 	popl	%ebp
 	ret
 .L_AES_cbc_encrypt_end:
-.size	AES_cbc_encrypt,.L_AES_cbc_encrypt_end-AES_cbc_encrypt
 .ident	"AES_cbc_encrypt"
 .globl	AES_Te
 .text
-.globl	AES_set_encrypt_key
-.type	AES_set_encrypt_key,@function
-.align	16
-AES_set_encrypt_key:
+.globl	_AES_set_encrypt_key
+.align	4
+_AES_set_encrypt_key:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
@@ -1566,15 +1555,13 @@ AES_set_encrypt_key:
 	popl	%ebp
 	ret
 .L_AES_set_encrypt_key_end:
-.size	AES_set_encrypt_key,.L_AES_set_encrypt_key_end-AES_set_encrypt_key
 .ident	"AES_set_encrypt_key"
 .globl	AES_Td
 .globl	AES_Te
 .text
-.globl	AES_set_decrypt_key
-.type	AES_set_decrypt_key,@function
-.align	16
-AES_set_decrypt_key:
+.globl	_AES_set_decrypt_key
+.align	4
+_AES_set_decrypt_key:
 	movl	4(%esp),	%eax
 	movl	8(%esp),	%ecx
 	movl	12(%esp),	%edx
@@ -1582,7 +1569,7 @@ AES_set_decrypt_key:
 	movl	%eax,		(%esp)
 	movl	%ecx,		4(%esp)
 	movl	%edx,		8(%esp)
-	call	AES_set_encrypt_key
+	call	_AES_set_encrypt_key
 	addl	$12,		%esp
 	cmpl	$0,		%eax
 	je	.L044proceed
@@ -1702,5 +1689,4 @@ AES_set_decrypt_key:
 	popl	%ebp
 	ret
 .L_AES_set_decrypt_key_end:
-.size	AES_set_decrypt_key,.L_AES_set_decrypt_key_end-AES_set_decrypt_key
 .ident	"AES_set_decrypt_key"

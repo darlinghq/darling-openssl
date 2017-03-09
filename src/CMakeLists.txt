@@ -639,6 +639,9 @@ set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
 add_library(crypto64 OBJECT ${crypto64_sources})
 set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
 
+set(DYLIB_COMPAT_VERSION "0.9.8")
+set(DYLIB_CURRENT_VERSION "0.9.8")
+
 set(DYLIB_INSTALL_NAME "/usr/lib/libcrypto.0.9.8.dylib")
 add_darling_library(crypto098 SHARED ${crypto_sources} $<TARGET_OBJECTS:crypto32> $<TARGET_OBJECTS:crypto64>)
 make_fat(crypto098)

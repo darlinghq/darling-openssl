@@ -8,8 +8,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2 -msse3 -w -nostdinc")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__DARWIN_UNIX03 -fPIC -w")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -nostdlib -Wl,--version-script=${DARLING_TOP_DIRECTORY}/darwin.map")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__DARWIN_UNIX03 -fPIC -w -ggdb -O0")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/MacOS)
@@ -89,11 +88,19 @@ set(crypto_sources
 	crypto/o_init.c
 	crypto/fips_err.c
 
+	crypto/seed/seed.c
+	crypto/seed/seed_cbc.c
+	crypto/seed/seed_cfb.c
+	crypto/seed/seed_ecb.c
+	crypto/seed/seed_ofb.c
+
 	crypto/objects/o_names.c
 	crypto/objects/obj_dat.c
 	crypto/objects/obj_lib.c
 	crypto/objects/obj_err.c
 
+	crypto/mdc2/mdc2dgst.c
+	crypto/mdc2/mdc2_one.c
 	crypto/md2/md2_dgst.c
 	crypto/md2/md2_one.c
 	crypto/md4/md4_dgst.c
@@ -344,6 +351,12 @@ set(crypto_sources
 	crypto/err/err_prn.c
 	crypto/err/err_str.c
 	crypto/err/err_bio.c
+
+	crypto/rc5/rc5cfb64.c
+	crypto/rc5/rc5_ecb.c
+	crypto/rc5/rc5_enc.c
+	crypto/rc5/rc5ofb64.c
+	crypto/rc5/rc5_skey.c
 
 	crypto/evp/encode.c
 	crypto/evp/digest.c
@@ -611,27 +624,41 @@ set(crypto_sources
 	crypto/pqueue/pqueue.c
 )
 
-if (BITS EQUAL 64)
-	set(crypto_sources ${crypto_sources}
-		crypto/aes/asm/aes-x86_64.S
-		#crypto/rc4/asm/rc4-x86_64.S
-	)
-else(BITS EQUAL 64)
-	set(crypto_sources ${crypto_sources}
-		crypto/aes/asm/aes-586.S
-		crypto/ripemd/asm/rmd-586.S
-		#crypto/rc4/asm/rc4-586.S
-	)
-endif(BITS EQUAL 64)
+set(crypto64_sources
+	crypto/aes/asm/aes-x86_64.S
+	#crypto/rc4/asm/rc4-x86_64.S
+)
+set(crypto32_sources
+	crypto/aes/asm/aes-586.S
+	crypto/ripemd/asm/rmd-586.S
+	#crypto/rc4/asm/rc4-586.S
+)
 
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/darling")
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+add_library(crypto32 OBJECT ${crypto32_sources})
+set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
+add_library(crypto64 OBJECT ${crypto64_sources})
+set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
 
-add_library(crypto098 SHARED ${crypto_sources})
+set(DYLIB_COMPAT_VERSION "0.9.8")
+set(DYLIB_CURRENT_VERSION "0.9.8")
+
+set(DYLIB_INSTALL_NAME "/usr/lib/libcrypto.0.9.8.dylib")
+add_darling_library(crypto098 SHARED ${crypto_sources} $<TARGET_OBJECTS:crypto32> $<TARGET_OBJECTS:crypto64>)
+make_fat(crypto098)
 target_link_libraries(crypto098 system)
+set_target_properties(crypto098 PROPERTIES OUTPUT_NAME "crypto.0.9.8")
 
-add_library(ssl098 SHARED ${ssl_sources})
+InstallSymlink("libcrypto.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libcrypto.0.9.7.dylib")
+InstallSymlink("libcrypto.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libcrypto.dylib")
+
+set(DYLIB_INSTALL_NAME "/usr/lib/libssl.0.9.8.dylib")
+add_darling_library(ssl098 SHARED ${ssl_sources})
+make_fat(ssl098)
 target_link_libraries(ssl098 system crypto098)
+set_target_properties(ssl098 PROPERTIES OUTPUT_NAME "ssl.0.9.8")
 
-install(TARGETS ssl098 crypto098 DESTINATION ${CMAKE_INSTALL_LIBDIR}/darling)
+InstallSymlink("libssl.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libssl.0.9.7.dylib")
+InstallSymlink("libssl.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libssl.dylib")
+
+
+install(TARGETS ssl098 crypto098 DESTINATION libexec/darling/usr/lib)

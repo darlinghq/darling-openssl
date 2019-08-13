@@ -634,10 +634,19 @@ set(crypto32_sources
 	#crypto/rc4/asm/rc4-586.S
 )
 
-add_library(crypto32 OBJECT ${crypto32_sources})
-set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
-add_library(crypto64 OBJECT ${crypto64_sources})
-set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
+if (TARGET_i386)
+	add_darling_object_library(crypto32 ${crypto32_sources})
+	set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
+else (TARGET_i386)
+	add_darling_object_library(crypto32 empty.c)
+endif (TARGET_i386)
+
+if (TARGET_x86_64)
+	add_darling_object_library(crypto64 ${crypto64_sources})
+	set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
+else (TARGET_x86_64)
+	add_darling_object_library(crypto64 empty.c)
+endif (TARGET_x86_64)
 
 set(DYLIB_COMPAT_VERSION "0.9.8")
 set(DYLIB_CURRENT_VERSION "0.9.8")

@@ -634,6 +634,54 @@ set(crypto32_sources
 	#crypto/rc4/asm/rc4-586.S
 )
 
+set(opensslexe_sources
+	apps/app_rand.c
+	apps/apps.c
+	apps/asn1pars.c
+	apps/ca.c
+	apps/ciphers.c
+	apps/cms.c
+	apps/crl2p7.c
+	apps/crl.c
+	apps/dgst.c
+	apps/dh.c
+	apps/dhparam.c
+	apps/dsa.c
+	apps/dsaparam.c
+	apps/ec.c
+	apps/ecparam.c
+	apps/enc.c
+	apps/engine.c
+	apps/errstr.c
+	apps/gendh.c
+	apps/gendsa.c
+	apps/genrsa.c
+	apps/nseq.c
+	apps/ocsp.c
+	apps/openssl.c
+	apps/passwd.c
+	apps/pkcs12.c
+	apps/pkcs7.c
+	apps/pkcs8.c
+	apps/prime.c
+	apps/rand.c
+	apps/req.c
+	apps/rsa.c
+	apps/rsautl.c
+	apps/s_cb.c
+	apps/s_client.c
+	apps/sess_id.c
+	apps/smime.c
+	apps/speed.c
+	apps/spkac.c
+	apps/s_server.c
+	apps/s_socket.c
+	apps/s_time.c
+	apps/verify.c
+	apps/version.c
+	apps/x509.c
+)
+
 if (TARGET_i386)
 	add_darling_object_library(crypto32 ${crypto32_sources})
 	set_target_properties(crypto32 PROPERTIES COMPILE_FLAGS "-arch i386")
@@ -671,3 +719,8 @@ InstallSymlink("libssl.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr
 
 
 install(TARGETS ssl098 crypto098 DESTINATION libexec/darling/usr/lib)
+
+add_definitions(-DMONOLITH)
+add_darling_executable(openssl ${opensslexe_sources})
+target_link_libraries(openssl ssl098 crypto098)
+install(TARGETS openssl DESTINATION libexec/darling/usr/bin)

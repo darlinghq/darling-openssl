@@ -18,7 +18,7 @@ include_directories(${DARLING_TOP_DIRECTORY}/platform-include)
 
 # TODO: Use all available assembly sources
 add_definitions(-DRMD160_ASM -DOPENSSL_FIPS_AES_ASM -DAES_ASM -DOPENSSL_NO_INLINE_ASM)
-add_definitions(-Ulinux -U__linux__ -DOPENSSL_SYSNAME_MACOSX)
+add_definitions(-DOPENSSL_SYSNAME_MACOSX)
 
 set(ssl_sources
 	ssl/bio_ssl.c

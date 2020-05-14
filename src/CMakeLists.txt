@@ -14,7 +14,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/MacOS)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/crypto)
-include_directories(${DARLING_TOP_DIRECTORY}/platform-include)
 
 # TODO: Use all available assembly sources
 add_definitions(-DRMD160_ASM -DOPENSSL_FIPS_AES_ASM -DAES_ASM -DOPENSSL_NO_INLINE_ASM)

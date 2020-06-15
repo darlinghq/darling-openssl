@@ -16,8 +16,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/crypto)
 
 # TODO: Use all available assembly sources
-add_definitions(-DRMD160_ASM -DOPENSSL_FIPS_AES_ASM -DAES_ASM -DOPENSSL_NO_INLINE_ASM)
+add_definitions(-DRMD160_ASM -DOPENSSL_NO_INLINE_ASM)
 add_definitions(-DOPENSSL_SYSNAME_MACOSX)
+
+if (TARGET_x86_64 OR TARGET_i386)
+	add_definitions(-DOPENSSL_FIPS_AES_ASM -DAES_ASM)
+endif ()
 
 set(ssl_sources
 	ssl/bio_ssl.c
@@ -623,10 +627,17 @@ set(crypto_sources
 	crypto/pqueue/pqueue.c
 )
 
-set(crypto64_sources
-	crypto/aes/asm/aes-x86_64.S
-	#crypto/rc4/asm/rc4-x86_64.S
-)
+if (TARGET_x86_64)
+	set(crypto64_sources
+		crypto/aes/asm/aes-x86_64.S
+		#crypto/rc4/asm/rc4-x86_64.S
+	)
+elseif (TARGET_ARM64)
+	set(crypto64_sources
+		crypto/aes/aes_core.c
+	)
+endif (TARGET_x86_64)
+
 set(crypto32_sources
 	crypto/aes/asm/aes-586.S
 	crypto/ripemd/asm/rmd-586.S
@@ -691,6 +702,9 @@ endif (TARGET_i386)
 if (TARGET_x86_64)
 	add_darling_object_library(crypto64 ${crypto64_sources})
 	set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
+elseif (TARGET_ARM64)
+	add_darling_object_library(crypto64 ${crypto64_sources})
+	set_target_properties(crypto64 PROPERTIES COMPILE_FLAGS "-arch arm64")
 else (TARGET_x86_64)
 	add_darling_object_library(crypto64 empty.c)
 endif (TARGET_x86_64)

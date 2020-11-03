@@ -621,56 +621,6 @@ set(crypto_sources
 	ssl/kssl.c
 )
 
-set(opensslexe_sources
-	apps/app_rand.c
-	apps/apps.c
-	apps/asn1pars.c
-	apps/ca.c
-	apps/ciphers.c
-	apps/cms.c
-	apps/crl.c
-	apps/crl2p7.c
-	apps/dgst.c
-	apps/dh.c
-	apps/dhparam.c
-	apps/dsa.c
-	apps/dsaparam.c
-	apps/ec.c
-	apps/ecparam.c
-	apps/enc.c
-	apps/engine.c
-	apps/errstr.c
-	apps/gendh.c
-	apps/gendsa.c
-	apps/genrsa.c
-	apps/nseq.c
-	apps/ocsp.c
-	apps/openssl.c
-	apps/passwd.c
-	apps/pkcs12.c
-	apps/pkcs7.c
-	apps/pkcs8.c
-	apps/prime.c
-	apps/rand.c
-	apps/req.c
-	apps/rsa.c
-	apps/rsautl.c
-	apps/s_cb.c
-	apps/s_client.c
-	apps/s_server.c
-	apps/s_socket.c
-	apps/s_time.c
-	apps/sess_id.c
-	apps/smime.c
-	apps/speed.c
-	apps/spkac.c
-	apps/verify.c
-	apps/version.c
-	apps/x509.c
-
-	crypto/cversion.c
-)
-
 set(DYLIB_COMPAT_VERSION "0.9.8")
 set(DYLIB_CURRENT_VERSION "0.9.8")
 
@@ -692,10 +642,14 @@ set_target_properties(ssl098 PROPERTIES OUTPUT_NAME "ssl.0.9.8")
 InstallSymlink("libssl.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libssl.0.9.7.dylib")
 InstallSymlink("libssl.0.9.8.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libssl.dylib")
 
-
 install(TARGETS ssl098 crypto098 DESTINATION libexec/darling/usr/lib)
 
-add_definitions(-DMONOLITH)
-add_darling_executable(openssl ${opensslexe_sources})
-target_link_libraries(openssl ssl098 crypto098)
-install(TARGETS openssl DESTINATION libexec/darling/usr/bin)
+install(DIRECTORY DESTINATION libexec/darling/System/Library/OpenSSL/private)
+
+install(FILES "apps/openssl.cnf" DESTINATION libexec/darling/System/Library/OpenSSL)
+install(FILES "apps/CA.pl" DESTINATION libexec/darling/System/Library/OpenSSL/misc)
+install(FILES "apps/CA.sh" DESTINATION libexec/darling/System/Library/OpenSSL/misc)
+install(FILES "tools/c_hash" DESTINATION libexec/darling/System/Library/OpenSSL/misc)
+install(FILES "tools/c_info" DESTINATION libexec/darling/System/Library/OpenSSL/misc)
+install(FILES "tools/c_issuer" DESTINATION libexec/darling/System/Library/OpenSSL/misc)
+install(FILES "tools/c_name" DESTINATION libexec/darling/System/Library/OpenSSL/misc)

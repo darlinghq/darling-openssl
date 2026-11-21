@@ -8,9 +8,10 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # DARLING: -msse* is x86-only; gate by target arch.
-if (TARGET_i386 OR TARGET_x86_64)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2 -msse3")
-endif()
+# The SSE options are for the Intel slices only
+darling_archs(_sse_archs FAMILY x86)
+darling_xarch_flags(_sse_flags ARCHS ${_sse_archs} OPTIONS -msse -msse2 -msse3)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_sse_flags}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -nostdinc")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__DARWIN_UNIX03 -fPIC -w -ggdb -O0")
 
